@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:game_2048/game/Game2048.dart';
 import 'package:game_2048/game/GameLogic.dart';
 import 'package:game_2048/main.dart';
 import 'package:provider/provider.dart';
@@ -38,9 +37,6 @@ class GamePanelState extends State<GamePanel> {
   /// 每行每列的个数
   static const int SIZE = 4;
 
-  ///当前分数
-  int _currentScore = 0;
-
   /// 判断是否游戏结束
   static bool _isGameOver = false;
 
@@ -69,48 +65,34 @@ class GamePanelState extends State<GamePanel> {
   }
 
   void reStartGame() {
-    setState(() {
-      logic.reset(_gameMap);
-      _initGameMap();
-      // 清空分数
-      //Provider.of<Score>(context).clearScore();
-      _isGameOver = false;
-    });
+    logic.reset(_gameMap);
+    Provider.of<Score>(context, listen: false).clear();
+    Provider.of<Score>(context, listen: false).initGameMap();
+    // 清空分数
+    //Provider.of<Score>(context).clearScore();
+    _isGameOver = false;
   }
 
   @override
   void initState() {
-    logic.reset(_gameMap);
-    //Provider.of<Score>(context).clearScore();
-    super.initState();
-    _initGameMap();
+    setState(() {
+      logic.reset(_gameMap);
+      Provider.of<Score>(context, listen: false).clear();
+      //Provider.of<Score>(context).clearScore();
+      super.initState();
+      Provider.of<Score>(context, listen: false).initGameMap();
+    });
   }
 
-  /// 初始化数据
-  static void _initGameMap() {
-    /// 执行两次随机
-    _randomNewCellData(2);
-    _randomNewCellData(4);
+  void NewGame() {
+    setState(() {
+      Provider.of<Score>(context, listen: false).currentScore = 0;
+      Provider.of<Score>(context, listen: false).NewGame();
+      _isGameOver = false;
+    });
   }
 
-  static void _randomNewCellData(int data) {
-    /// 在产生新的数字（块）时，
-    /// 需要先判断下是否map中所有的数字都不为0
-    /// 如果都不为0，就直接return，不产生新数字
-    if (!_gameMap.hasEmptySpace()) {
-      debugPrint("gameMap中都不是0，不能生成");
-      return;
-    }
-    while (true) {
-      Random random = Random();
-      int randomI = random.nextInt(SIZE);
-      int randomJ = random.nextInt(SIZE);
-      if (_gameMap.tile(randomI, randomJ) == 0) {
-        _gameMap.retile(randomI, randomJ, data);
-        break;
-      }
-    }
-  }
+
 
   Widget _buildGamePanel(BuildContext context) {
     Offset lastPosition = Offset.zero;
@@ -188,7 +170,7 @@ class GamePanelState extends State<GamePanel> {
                     itemBuilder: (context, int index) {
                       int indexI = index ~/ SIZE;
                       int indexJ = index % SIZE;
-                      return _buildGameCell(_gameMap.tile(indexI, indexJ));
+                      return _buildGameCell(Provider.of<Score>(context, listen: true).tile1(indexI, indexJ));
                     },
                   ),
                 ),
@@ -219,8 +201,8 @@ class GamePanelState extends State<GamePanel> {
       }
       if (!_noMoveInSwipe) {
         var a = Random().nextDouble();
-        if (a < 0.75) _randomNewCellData(2);
-        else _randomNewCellData(4);
+        if (a < 0.75) Provider.of<Score>(context, listen: false).randomNewCellData(2);
+        else Provider.of<Score>(context, listen: false).randomNewCellData(4);
       }
       checkEnd();
     });

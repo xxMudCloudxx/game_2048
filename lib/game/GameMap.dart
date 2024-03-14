@@ -1,11 +1,13 @@
-import 'Model/Side.dart';
+
+import 'package:provider/provider.dart';
+import '../main.dart';
 
 class GameMap {
-  static const int SIZE = 4;
-  //Side viewPerspective = Side.NORTH;
-  List _numMap = List.generate(SIZE, (_) => List<int>.generate(SIZE, (_) => 0));
 
-  int size() => _numMap.length;
+  //Side viewPerspective = Side.NORTH;
+
+
+  int size(context) => Score.size();
 
   // int vtile(int col, int row,Side side) {
   //   return _numMap[side.col(col, row, size())][side.row(col, row, size())];
@@ -17,30 +19,19 @@ class GameMap {
 
 
   int tile(int col, int row) {
-    return _numMap[col][row];
+    return Score.tile(col, row);
   }
 
   void retile(int col, int row, int value) {
-    _numMap[col][row] = value;
+    Score.retile(col, row, value);
   }
 
-  void clear() {
-    for (int r = 0; r < size(); r++) {
-      for (int c = 0; c < size(); c++) {
-        retile(c, r, 0);
-      }
-    }
+  void clear(context) {
+    return Provider.of<Score>(context, listen: false).clear();
   }
 
   bool hasEmptySpace() {
-    int length = size();
-    for(int i = 0; i < length; i++) {
-      for (int j = 0; j < length; j++) {
-        if (tile(i, j) == 0)
-          return true;
-      }
-    }
-    return false;
+    return Score.hasEmptySpace();
   }
   //
   // bool move(int col, int row, int tile_col, int tile_row) {

@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
 import 'Color.dart';
 import 'Game2048.dart';
+import 'GameMap.dart';
 
 
 class GameHeader extends StatefulWidget {
@@ -22,19 +24,11 @@ class _GameHeader extends State<GameHeader> {
   /// 用于获取 Game2048PanelState 实例，以便可以调用restartGame方法
 
   GameLogic logic = GameLogic();
+  GameMap _gameMap = GameMap();
 
   static const GAME_2048_HIGHEST_SCORE = "game_2048_highest_score";
 
   Future<SharedPreferences> _spFuture = SharedPreferences.getInstance();
-
-  // void setScore(int s) {
-  //   currentScore += s;
-  //   if (currentScore > highestScore) {
-  //     highestScore = currentScore;
-  //   }
-  // }
-  // int getCurrentScore() => currentScore;
-  // int getHighestScore() => highestScore;
 
   _GameHeader() {
     initState();
@@ -96,7 +90,10 @@ class _GameHeader extends State<GameHeader> {
       ),
       child: InkWell(
         onTap: () {
-          // 重新开始游戏，这里的逻辑之后再实现
+          setState(() {
+            Provider.of<Score>(context, listen: false).currentScore = 0;
+            Provider.of<Score>(context, listen: false).NewGame();
+          });
         },
         child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -135,12 +132,12 @@ class _GameHeader extends State<GameHeader> {
   void readHighestScoreFromSp() async {
     final SharedPreferences sp = await _spFuture;
     setState(() {
-      //Score.setScore(sp.getInt(GAME_2048_HIGHEST_SCORE) ?? 0);
+      Provider.of<Score>(context).highestScore = (sp.getInt(GAME_2048_HIGHEST_SCORE) ?? 0);
     });
   }
 
   void storeHighestScoreToSp() async {
     final SharedPreferences sp = await _spFuture;
-    //await sp.setInt(GAME_2048_HIGHEST_SCORE, Score.getHigh());
+    await sp.setInt(GAME_2048_HIGHEST_SCORE, Provider.of<Score>(context).highestScore);
   }
 }
