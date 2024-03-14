@@ -54,6 +54,8 @@ class Score with ChangeNotifier {
     numMap[col][row] = value;
   }
 
+  int one = 1;
+
   static int size() {
     return numMap.length;
   }
@@ -63,7 +65,6 @@ class Score with ChangeNotifier {
   }
 
   int tile1(int col, int row) {
-    notifyListeners();
     return numMap[col][row];
   }
 
@@ -81,7 +82,33 @@ class Score with ChangeNotifier {
     notifyListeners();
   }
 
+  static void initGameMap1() {
+    /// 执行两次随机
+    randomNewCellData1(2);
+    randomNewCellData1(4);
+  }
+
+
   void randomNewCellData(int data) {
+    /// 在产生新的数字（块）时，
+    /// 需要先判断下是否map中所有的数字都不为0
+    /// 如果都不为0，就直接return，不产生新数字
+    if (!hasEmptySpace()) {
+      debugPrint("gameMap中都不是0，不能生成");
+      return;
+    }
+    while (true) {
+      Random random = Random();
+      int randomI = random.nextInt(SIZE);
+      int randomJ = random.nextInt(SIZE);
+      if (tile(randomI, randomJ) == 0) {
+        retile(randomI, randomJ, data);
+        break;
+      }
+    }
+  }
+
+  static void randomNewCellData1(int data) {
     /// 在产生新的数字（块）时，
     /// 需要先判断下是否map中所有的数字都不为0
     /// 如果都不为0，就直接return，不产生新数字
@@ -112,6 +139,14 @@ class Score with ChangeNotifier {
   }
 
   void clear() {
+    for (int r = 0; r < size(); r++) {
+      for (int c = 0; c < size(); c++) {
+        retile(c, r, 0);
+      }
+    }
+  }
+
+  static void clear1() {
     for (int r = 0; r < size(); r++) {
       for (int c = 0; c < size(); c++) {
         retile(c, r, 0);

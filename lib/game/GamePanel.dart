@@ -12,9 +12,8 @@ import 'Model/Side.dart';
 bool _noMoveInSwipe = true;
 
 class GamePanel extends StatefulWidget {
-  final ValueChanged<int>? onScoreChanged;
 
-  GamePanel({Key? key, this.onScoreChanged}) : super(key: key);
+  GamePanel({Key? key}) : super(key: key);
 
   @override
   GamePanelState createState() => GamePanelState();
@@ -24,6 +23,7 @@ class GamePanelState extends State<GamePanel> {
   GamePanelState() {
     initState();
   }
+
   // 数据源，类型是 List<List<int>>
   static GameMap _gameMap = GameMap();
   GameLogic logic = GameLogic();
@@ -75,13 +75,11 @@ class GamePanelState extends State<GamePanel> {
 
   @override
   void initState() {
-    setState(() {
-      logic.reset(_gameMap);
-      Provider.of<Score>(context, listen: false).clear();
-      //Provider.of<Score>(context).clearScore();
-      super.initState();
-      Provider.of<Score>(context, listen: false).initGameMap();
-    });
+    super.initState();
+    logic.reset(_gameMap);
+    Score.clear1();
+    // Provider.of<Score>(context).clearScore();
+    Score.initGameMap1();
   }
 
   void NewGame() {

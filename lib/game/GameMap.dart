@@ -26,10 +26,6 @@ class GameMap {
     Score.retile(col, row, value);
   }
 
-  void clear(context) {
-    return Provider.of<Score>(context, listen: false).clear();
-  }
-
   bool hasEmptySpace() {
     return Score.hasEmptySpace();
   }
