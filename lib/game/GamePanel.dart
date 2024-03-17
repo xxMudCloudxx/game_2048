@@ -1,11 +1,9 @@
 import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:game_2048/game/GameLogic.dart';
 import 'package:game_2048/main.dart';
 import 'package:provider/provider.dart';
-
 import 'Color.dart';
 import 'GameMap.dart';
 import 'Model/Side.dart';
@@ -101,44 +99,7 @@ class GamePanelState extends State<GamePanel> {
       },
       onPanUpdate: (details) {
         final curPosition = details.globalPosition;
-        if ((curPosition.dx - lastPosition.dx).abs() > _mainAxisMinLimit &&
-            (curPosition.dy - lastPosition.dy).abs() < _crossAxisMaxLimit) {
-          // 水平
-          if (_firstTouch) {
-            _firstTouch = false;
-            if ((curPosition.dx - lastPosition.dx).abs() > _crossAxisMaxLimit) {
-              if(curPosition.dx - lastPosition.dx > 0) {
-                setMoveState(Side.EAST);
-              } else {
-                // print("moveWest");
-                // setMoveState(Side.WEST);
-                print("moveSouth");
-                setMoveState(Side.WEST);
-              }
-            }
-          }
-        } else if((curPosition.dy - lastPosition.dy).abs() >
-            _mainAxisMinLimit &&
-            (curPosition.dx - lastPosition.dx).abs() < _crossAxisMaxLimit){
-          //垂直
-          if ((curPosition.dy - lastPosition.dy).abs() > _mainAxisMinLimit) {
-            if (_firstTouch) {
-              _firstTouch = false;
-              if(curPosition.dy - lastPosition.dy > 0) {
-                // print("moveSouth");
-                // setMoveState(Side.SOUTH);
-                print("moveEast");
-                setMoveState(Side.SOUTH);
-              } else {
-                // print("moveNORTH");
-                // setMoveState(Side.NORTH);
-                print("moveWest");
-                setMoveState(Side.NORTH);
-              }
-            }
-          }
-        }
-
+        moveJudge(curPosition, lastPosition);
       },
       child: AspectRatio(
         aspectRatio: 1.0,
@@ -244,6 +205,46 @@ class GamePanelState extends State<GamePanel> {
             ],
           ),
         ));
+  }
+
+  void moveJudge(Offset curPosition, Offset lastPosition) {
+    if ((curPosition.dx - lastPosition.dx).abs() > _mainAxisMinLimit &&
+        (curPosition.dy - lastPosition.dy).abs() < _crossAxisMaxLimit) {
+      // 水平
+      if (_firstTouch) {
+        _firstTouch = false;
+        if ((curPosition.dx - lastPosition.dx).abs() > _crossAxisMaxLimit) {
+          if(curPosition.dx - lastPosition.dx > 0) {
+            setMoveState(Side.EAST);
+          } else {
+            // print("moveWest");
+            // setMoveState(Side.WEST);
+            print("moveSouth");
+            setMoveState(Side.WEST);
+          }
+        }
+      }
+    } else if((curPosition.dy - lastPosition.dy).abs() >
+        _mainAxisMinLimit &&
+        (curPosition.dx - lastPosition.dx).abs() < _crossAxisMaxLimit){
+      //垂直
+      if ((curPosition.dy - lastPosition.dy).abs() > _mainAxisMinLimit) {
+        if (_firstTouch) {
+          _firstTouch = false;
+          if(curPosition.dy - lastPosition.dy > 0) {
+            // print("moveSouth");
+            // setMoveState(Side.SOUTH);
+            print("moveEast");
+            setMoveState(Side.SOUTH);
+          } else {
+            // print("moveNORTH");
+            // setMoveState(Side.NORTH);
+            print("moveWest");
+            setMoveState(Side.NORTH);
+          }
+        }
+      }
+    }
   }
 
   /// 创建一个 1 * 1 的游戏框架布局
